@@ -20,8 +20,7 @@ namespace Virtual_Machine
 
         public string[] commands;
         public string[] parameters;
-        public int[] reg = new int[16]; // was - char[] reg = new char[16];
-        //public char[] memory = new char[256];
+        public int[] reg = new int[16];
         public bool flag = false;
         public bool fileEnd = false;
         public byte[] decr;
@@ -76,19 +75,20 @@ namespace Virtual_Machine
 
             // Finding the needed function with commandsIndex array
             int[] commandsIndex = new int[commands.Length];
-            for (j = 0; j < commands.Length; j++) // j - as a counter
+            bool running = true;
+            while (running)
             {
-                if (!flag)
+                if (flag)
                 {
-                    commandsIndex[j] = Convert.ToInt32(commands[j], 16);
+                    running = false;
+                }
 
-                    commandList[commandsIndex[j] - 1].Invoke(cmd, new object[] { this }); // be careful with commandList array, it has spare methods
-                    //commandList[17 - 1].Invoke(cmd, new object[] { this });
-                }
-                else
-                {
-                    Console.WriteLine("Program Ends!\n");
-                }
+                commandsIndex[j] = Convert.ToInt32(commands[j], 16);
+
+                commandList[commandsIndex[j] - 1].Invoke(cmd, new object[] { this }); // be careful with commandList array, it has spare methods
+                //commandList[17 - 1].Invoke(cmd, new object[] { this }); // - for exact method
+
+                j++; // j - as a counter
             }
         }
     }

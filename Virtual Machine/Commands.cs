@@ -5,7 +5,7 @@ namespace Virtual_Machine
 {
     public class Commands
     {
-        string encr; // mb do through char[]
+        string encr;
 
         public Commands() // Reading the ecnryption file
         {
@@ -19,7 +19,6 @@ namespace Virtual_Machine
             }
         }
 
-        // figure out how to modify not the copy of reg but the reg itself
         public void INC(Program program)
         {
             int rightIndex = int.Parse(program.parameters[program.j].ElementAt(1).ToString());
@@ -63,12 +62,12 @@ namespace Virtual_Machine
             program.reg[rightIndex] = program.reg[rightIndex] >> 1;
         }
 
-        public void JMP(Program program) // all jump commands works wrong bcs of index (counter) wrong assigning
+        public void JMP(Program program)                                                                    // all jump commands works wrong bcs of index (counter) wrong assigning
         {
             program.j = int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber);
         }
 
-        public void JZ(Program program) // this shouldn't work bcs of the loop
+        public void JZ(Program program)                                                                     // this shouldn't work bcs of the loop
         {
             if (program.flag)
             {
@@ -84,7 +83,7 @@ namespace Virtual_Machine
             }
         }
 
-        public void JFE(Program program) // check if it's really changing the 'j' inside the loop
+        public void JFE(Program program)
         {
             if (program.fileEnd)
             {
@@ -140,18 +139,15 @@ namespace Virtual_Machine
             {
                 program.fileEnd = true;
             }
-
-            // some kind of operation with flag here
         }
 
         public void OUT(Program program)
         {
             int Rx = int.Parse(program.parameters[program.j].ElementAt(1).ToString());
 
-            using (StreamWriter sw = new StreamWriter("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\output.txt", false))
+            using (StreamWriter sw = new StreamWriter("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\output.txt", true))
             {
-                sw.Write(program.reg[Rx]);
-                // ascii converted
+                sw.Write((char)program.reg[Rx]);
             }
         }
     }
