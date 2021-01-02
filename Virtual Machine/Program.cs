@@ -11,10 +11,13 @@ namespace Virtual_Machine
         {
             var program = new Program();
 
-            program.ReadFromFiles();
+            program.ReadFromFilesBytes();
+
+            //program.ReadFromFilesString();
 
             program.Formate();
 
+            Console.WriteLine("Program Ends!");
             Console.ReadLine();
         }
 
@@ -26,20 +29,43 @@ namespace Virtual_Machine
         public byte[] decr;
         public int j;
         StringBuilder decryptionString = new StringBuilder();
-        Commands cmd = new Commands();
+        public FileInfo encryptionFilePath;
+        public FileInfo decryptionFilePath;
 
-        private void ReadFromFiles()
+        private void ReadFromFilesBytes()
         {
-            FileInfo encryptionFilePath = new FileInfo("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\q1_encr.txt");
-            string decryptionFilePath = "D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\decryptor.bin";
-
-            if (encryptionFilePath.Exists)
+            encryptionFilePath = new FileInfo("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\q1_encr.txt");
+            decryptionFilePath = new FileInfo("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\decryptor.bin");
+            
+            if (encryptionFilePath.Exists && decryptionFilePath.Exists)
             {
-                decr = File.ReadAllBytes(decryptionFilePath);
+                decr = File.ReadAllBytes(decryptionFilePath.FullName);
                 foreach (byte b in decr)
                 {
                     decryptionString.Append(Convert.ToString(b, 16).PadLeft(2, '0'));
                 }
+            }
+            else
+            {
+                throw new Exception("Wrong path!");
+            }
+        }
+
+        private void ReadFromFilesString()
+        {
+            encryptionFilePath = new FileInfo("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\part 2\\encryption.txt");
+            decryptionFilePath = new FileInfo("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\part 2\\decryption.txt");
+
+            if (encryptionFilePath.Exists && decryptionFilePath.Exists)
+            {
+                using (StreamReader sr = new StreamReader(decryptionFilePath.FullName))
+                {
+                    decryptionString.Append(sr.ReadToEnd());
+                }
+            }
+            else
+            {
+                throw new Exception("Wrong path!");
             }
         }
 
@@ -66,6 +92,8 @@ namespace Virtual_Machine
 
         private void Run()
         {
+            Commands cmd = new Commands(this);
+
             // Creating the list of  all functions from Commands class
             var commandList = new List<System.Reflection.MethodInfo>();
             foreach (var func in typeof(Commands).GetMethods())
@@ -81,6 +109,7 @@ namespace Virtual_Machine
                 if (flag)
                 {
                     running = false;
+                    break;
                 }
 
                 commandsIndex[j] = Convert.ToInt32(commands[j], 16);

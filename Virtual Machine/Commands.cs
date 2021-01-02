@@ -7,12 +7,11 @@ namespace Virtual_Machine
     {
         string encr;
 
-        public Commands() // Reading the ecnryption file
+        public Commands(Program program) // Reading the ecnryption file
         {
-            FileInfo encryptionFilePath = new FileInfo("D:\\C# Training\\Labs\\Virtual Machine\\Virtual Machine\\bin\\Debug\\q1_encr.txt");
-            if (encryptionFilePath.Exists)
+            if (program.encryptionFilePath.Exists && program.decryptionFilePath.Exists)
             {
-                using (StreamReader sr = encryptionFilePath.OpenText())
+                using (StreamReader sr = program.encryptionFilePath.OpenText())
                 {
                     encr = sr.ReadToEnd();
                 }
@@ -62,16 +61,17 @@ namespace Virtual_Machine
             program.reg[rightIndex] = program.reg[rightIndex] >> 1;
         }
 
-        public void JMP(Program program)                                                                    // all jump commands works wrong bcs of index (counter) wrong assigning
+        public void JMP(Program program) // jump commands notes: stange adress assigning in decryption file, if the number would be odd and we will divide it on 2 - which part will be rounded??? check it
         {
-            program.j = int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber);
+            //program.j = program.j + int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber) / 2 - 1; 
+            program.j = -1;
         }
 
-        public void JZ(Program program)                                                                     // this shouldn't work bcs of the loop
+        public void JZ(Program program) // this shouldn't work bcs of the loop break
         {
             if (program.flag)
             {
-                program.j = int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber);
+                program.j = program.j + int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber) / 2 - 1;
             }
         }
 
@@ -79,7 +79,7 @@ namespace Virtual_Machine
         {
             if (!program.flag)
             {
-                program.j = int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber);
+                program.j = program.j + int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber) / 2 - 1;
             }
         }
 
@@ -87,7 +87,7 @@ namespace Virtual_Machine
         {
             if (program.fileEnd)
             {
-                program.j = int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber);
+                program.j = program.j + int.Parse(program.parameters[program.j], System.Globalization.NumberStyles.HexNumber) / 2 - 1;
             }
         }
 
@@ -132,12 +132,14 @@ namespace Virtual_Machine
         {
             int Rx = int.Parse(program.parameters[program.j].ElementAt(1).ToString());
 
-            program.reg[Rx] = (int)encr.ElementAt(0);
-            encr = encr.Remove(0, 1);
-
-            if (encr.Length < 1)
+            if (encr.Length == 0)
             {
                 program.fileEnd = true;
+            }
+            else
+            {
+                program.reg[Rx] = (int)encr.ElementAt(0);
+                encr = encr.Remove(0, 1);
             }
         }
 
