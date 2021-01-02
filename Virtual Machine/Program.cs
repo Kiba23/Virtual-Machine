@@ -108,7 +108,6 @@ namespace Virtual_Machine
             {
                 if (flag)
                 {
-                    running = false;
                     break;
                 }
 
